@@ -1,0 +1,46 @@
+# AI Style Advisor — Python dependencies
+# Python 3.10+ required
+# Install: pip install -r requirements.txt
+
+# ── Core ML ─────────────────────────────────────────────────────────────────
+torch
+torchvision
+
+# ── HuggingFace stack ────────────────────────────────────────────────────────
+transformers
+tokenizers
+datasets
+accelerate
+huggingface-hub
+safetensors
+
+# ── LoRA ─────────────────────────────────────────────────────────────────────
+peft==0.14.0
+torchao==0.16.0
+bitsandbytes
+trl
+
+# ── Vision ───────────────────────────────────────────────────────────────────
+Pillow
+timm
+
+# ── Embeddings & local vector store ─────────────────────────────────────────
+sentence-transformers
+numpy
+
+# ── API layer ────────────────────────────────────────────────────────────────
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+scikit-learn
+scipy
+tqdm
+requests
+aiofiles
+
+# ── Dev / testing ────────────────────────────────────────────────────────────
+pytest
+httpx

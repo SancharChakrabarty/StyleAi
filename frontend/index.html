@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Style Advisor</title>
+  <!-- Markdown renderer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+  <!-- PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f0f13;
+      --surface:   #18181f;
+      --border:    #2a2a38;
+      --accent:    #c9a96e;        /* warm gold */
+      --accent2:   #6e8fc9;        /* muted blue */
+      --text:      #e8e4dc;
+      --muted:     #7a7a8c;
+      --success:   #4caf82;
+      --error:     #e06c6c;
+      --radius:    12px;
+      --font-body: 'Georgia', 'Times New Roman', serif;
+      --font-ui:   system-ui, -apple-system, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── Layout ── */
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    header {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-mark {
+      width: 38px; height: 38px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: .03em;
+      color: var(--text);
+    }
+    header p { font-size: .8rem; color: var(--muted); }
+
+    main { padding: 32px 24px; max-width: 860px; margin: 0 auto; width: 100%; }
+
+    footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      font-size: .75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── Upload zone ── */
+    #drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative;
+    }
+    #drop-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(201,169,110,.06);
+    }
+    #drop-zone .icon { font-size: 40px; margin-bottom: 12px; }
+    #drop-zone .label { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+    #drop-zone .sub   { font-size: .8rem; color: var(--muted); }
+    #file-input { display: none; }
+
+    /* ── Preview ── */
+    #preview-wrap {
+      display: none;
+      margin-top: 24px;
+      position: relative;
+    }
+    #preview-wrap img {
+      width: 100%;
+      max-height: 340px;
+      object-fit: contain;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    #remove-btn {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(0,0,0,.6); border: none;
+      color: var(--text); border-radius: 50%;
+      width: 30px; height: 30px; cursor: pointer;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+    }
+    #remove-btn:hover { background: rgba(224,108,108,.8); }
+
+    /* ── CTA button ── */
+    #analyze-btn {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      background: var(--accent);
+      color: #111;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+    }
+    #analyze-btn:hover:not(:disabled) { opacity: .88; }
+    #analyze-btn:active:not(:disabled) { transform: scale(.985); }
+    #analyze-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── Progress steps ── */
+    #progress-wrap {
+      display: none;
+      margin-top: 28px;
+    }
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: .9rem;
+      color: var(--muted);
+      transition: border-color .3s, color .3s;
+    }
+    .step .step-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+    .step.active  { border-color: var(--accent); color: var(--accent); }
+    .step.done    { border-color: var(--success); color: var(--success); }
+    .step.done .step-icon::after { content: '✓'; }
+    .step.active .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid var(--accent);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin-left: auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Result card ── */
+    #result-wrap { display: none; margin-top: 32px; }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .result-header h2 { font-size: 1.1rem; color: var(--accent); }
+
+    #download-btn {
+      padding: 8px 18px;
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    #download-btn:hover { background: rgba(201,169,110,.12); }
+
+    /* Attribute pills */
+    .attr-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .attr-pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .attr-pill strong { color: var(--text); }
+
+    /* Report prose */
+    #report-content {
+      font-family: var(--font-body);
+      font-size: .97rem;
+      line-height: 1.85;
+      color: var(--text);
+    }
+    #report-content h2 {
+      font-family: var(--font-ui);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 28px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    #report-content h3 {
+      font-family: var(--font-ui);
+      font-size: .95rem;
+      font-weight: 600;
+      margin: 18px 0 6px;
+    }
+    #report-content p  { margin-bottom: 12px; }
+    #report-content ul,
+    #report-content ol { padding-left: 22px; margin-bottom: 12px; }
+    #report-content li { margin-bottom: 5px; }
+    #report-content strong { color: var(--accent); font-weight: 600; }
+    #report-content em { font-style: italic; color: var(--muted); }
+    #report-content code {
+      background: var(--surface);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: .9em;
+    }
+
+    /* ── Error banner ── */
+    #error-banner {
+      display: none;
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: rgba(224,108,108,.1);
+      border: 1px solid var(--error);
+      border-radius: 8px;
+      color: var(--error);
+      font-size: .9rem;
+    }
+
+    /* ── Timing chip ── */
+    .timing-chip {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 560px) {
+      main { padding: 20px 16px; }
+      #drop-zone { padding: 36px 16px; }
+      .result-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <header>
+    <div class="logo-mark">✦</div>
+    <div>
+      <h1>AI Style Advisor</h1>
+      <p>Self-hosted · Fully private · No external APIs</p>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Drop zone -->
+    <div id="drop-zone" role="button" tabindex="0" aria-label="Upload photo">
+      <div class="icon">📷</div>
+      <p class="label">Drop your photo here</p>
+      <p class="sub">or click to browse — JPEG, PNG, or WEBP · max 10 MB</p>
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" />
+    </div>
+
+    <!-- Preview -->
+    <div id="preview-wrap">
+      <img id="preview-img" alt="Preview" />
+      <button id="remove-btn" title="Remove image" aria-label="Remove image">✕</button>
+    </div>
+
+    <!-- Analyze button -->
+    <button id="analyze-btn" disabled>Analyze My Style</button>
+
+    <!-- Error -->
+    <div id="error-banner" role="alert"></div>
+
+    <!-- Progress -->
+    <div id="progress-wrap" aria-live="polite">
+      <div class="steps">
+        <div class="step" id="step-1" data-label="Analyzing facial features …">
+          <span class="step-icon">👤</span>
+          <span>Analyzing facial features</span>
+        </div>
+        <div class="step" id="step-2" data-label="Fetching current fashion trends …">
+          <span class="step-icon">🔍</span>
+          <span>Fetching current fashion trends</span>
+        </div>
+        <div class="step" id="step-3" data-label="Generating your personalized report …">
+          <span class="step-icon">✍️</span>
+          <span>Generating your personalized report</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="result-wrap">
+      <div class="result-header">
+        <h2>Your Style Report</h2>
+        <button id="download-btn">⬇ Download PDF</button>
+      </div>
+
+      <!-- Attribute pills -->
+      <div class="attr-grid" id="attr-grid"></div>
+
+      <!-- Markdown report -->
+      <div id="report-content"></div>
+
+      <!-- Timing -->
+      <div class="timing-chip" id="timing-chip"></div>
+    </div>
+
+  </main>
+
+  <footer>AI Style Advisor v1.0 — all processing runs locally on your server</footer>
+</div>
+
+<script>
+  /* ── State ── */
+  let selectedFile = null;
+  // Set STYLEAI_API_URL as a global before this script to override (e.g. from a config.js)
+  const API_BASE = window.STYLEAI_API_URL || 'http://localhost:8000';
+
+  /* ── Element refs ── */
+  const dropZone    = document.getElementById('drop-zone');
+  const fileInput   = document.getElementById('file-input');
+  const previewWrap = document.getElementById('preview-wrap');
+  const previewImg  = document.getElementById('preview-img');
+  const removeBtn   = document.getElementById('remove-btn');
+  const analyzeBtn  = document.getElementById('analyze-btn');
+  const errorBanner = document.getElementById('error-banner');
+  const progressWrap= document.getElementById('progress-wrap');
+  const resultWrap  = document.getElementById('result-wrap');
+  const reportEl    = document.getElementById('report-content');
+  const attrGrid    = document.getElementById('attr-grid');
+  const timingChip  = document.getElementById('timing-chip');
+  const downloadBtn = document.getElementById('download-btn');
+
+  /* ── Drop zone: click ── */
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
+
+  /* ── Drop zone: drag-and-drop ── */
+  ['dragenter', 'dragover'].forEach(evt => {
+    dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  });
+  ['dragleave', 'drop'].forEach(evt => {
+    dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.remove('drag-over'); });
+  });
+  dropZone.addEventListener('drop', e => {
+    const file = e.dataTransfer?.files?.[0];
+    if (file) setFile(file);
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) setFile(fileInput.files[0]);
+  });
+
+  /* ── Remove ── */
+  removeBtn.addEventListener('click', clearFile);
+
+  /* ── Set file ── */
+  function setFile(file) {
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      showError('Unsupported file type. Please upload a JPEG, PNG, or WEBP image.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showError('File exceeds 10 MB. Please use a smaller image.');
+      return;
+    }
+    selectedFile = file;
+    previewImg.src = URL.createObjectURL(file);
+    previewWrap.style.display = 'block';
+    analyzeBtn.disabled = false;
+    hideError();
+    resultWrap.style.display = 'none';
+    progressWrap.style.display = 'none';
+  }
+
+  function clearFile() {
+    selectedFile = null;
+    previewWrap.style.display = 'none';
+    previewImg.src = '';
+    fileInput.value = '';
+    analyzeBtn.disabled = true;
+    resultWrap.style.display = 'none';
+    progressWrap.style.display = 'none';
+    hideError();
+  }
+
+  /* ── Progress steps ── */
+  const steps = [
+    document.getElementById('step-1'),
+    document.getElementById('step-2'),
+    document.getElementById('step-3'),
+  ];
+
+  function resetSteps() {
+    steps.forEach(s => {
+      s.classList.remove('active', 'done');
+      const spinner = s.querySelector('.spinner');
+      if (spinner) spinner.remove();
+    });
+  }
+
+  function activateStep(idx) {
+    if (idx > 0) {
+      steps[idx - 1].classList.remove('active');
+      steps[idx - 1].classList.add('done');
+      const prevSpinner = steps[idx - 1].querySelector('.spinner');
+      if (prevSpinner) prevSpinner.remove();
+    }
+    if (idx < steps.length) {
+      steps[idx].classList.add('active');
+      const spinner = document.createElement('span');
+      spinner.className = 'spinner';
+      steps[idx].appendChild(spinner);
+    }
+  }
+
+  function finishSteps() {
+    steps.forEach(s => {
+      s.classList.remove('active');
+      s.classList.add('done');
+      const spinner = s.querySelector('.spinner');
+      if (spinner) spinner.remove();
+    });
+  }
+
+  /* ── Simulate progress during API call ── */
+  let progressTimer = null;
+  function startProgress() {
+    progressWrap.style.display = 'block';
+    resultWrap.style.display = 'none';
+    resetSteps();
+    activateStep(0);
+
+    let idx = 0;
+    progressTimer = setInterval(() => {
+      idx++;
+      if (idx < steps.length) activateStep(idx);
+      else clearInterval(progressTimer);
+    }, 2200);
+  }
+
+  function stopProgress() {
+    clearInterval(progressTimer);
+    finishSteps();
+    setTimeout(() => { progressWrap.style.display = 'none'; }, 600);
+  }
+
+  /* ── Render attributes ── */
+  function renderAttrs(attrs) {
+    attrGrid.innerHTML = '';
+    Object.entries(attrs).forEach(([k, v]) => {
+      const pill = document.createElement('div');
+      pill.className = 'attr-pill';
+      pill.innerHTML = `${k.replace(/_/g, ' ')}: <strong>${v}</strong>`;
+      attrGrid.appendChild(pill);
+    });
+  }
+
+  /* ── Analyze ── */
+  analyzeBtn.addEventListener('click', async () => {
+    if (!selectedFile) return;
+
+    analyzeBtn.disabled = true;
+    hideError();
+    startProgress();
+
+    const formData = new FormData();
+    formData.append('image', selectedFile);
+
+    try {
+      const res = await fetch(`${API_BASE}/analyze`, {
+        method: 'POST',
+        body:   formData,
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Unknown error' }));
+        throw new Error(err.detail || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      stopProgress();
+      renderReport(data);
+
+    } catch (err) {
+      stopProgress();
+      showError(`Analysis failed: ${err.message}`);
+    } finally {
+      analyzeBtn.disabled = false;
+    }
+  });
+
+  /* ── Render report ── */
+  function renderReport(data) {
+    renderAttrs(data.attributes || {});
+
+    const md = data.report || '_No report generated._';
+    reportEl.innerHTML = marked.parse(md);
+
+    const t = data.timing || {};
+    timingChip.textContent =
+      `⏱ Total: ${Math.round(data.processing_time_ms)}ms  ` +
+      `(extraction ${Math.round(t.extraction_ms)}ms · ` +
+      `retrieval ${Math.round(t.retrieval_ms)}ms · ` +
+      `generation ${Math.round(t.generation_ms)}ms)`;
+
+    resultWrap.style.display = 'block';
+    resultWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ── PDF download ── */
+  downloadBtn.addEventListener('click', () => {
+    const el = document.getElementById('result-wrap');
+    const opt = {
+      margin:       [10, 14, 10, 14],
+      filename:     'AI-Style-Advisor-Report.pdf',
+      image:        { type: 'jpeg', quality: 0.96 },
+      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#18181f' },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    };
+    html2pdf().set(opt).from(el).save();
+  });
+
+  /* ── Error helpers ── */
+  function showError(msg) {
+    errorBanner.textContent = msg;
+    errorBanner.style.display = 'block';
+  }
+  function hideError() {
+    errorBanner.textContent = '';
+    errorBanner.style.display = 'none';
+  }
+</script>
+</body>
+</html>

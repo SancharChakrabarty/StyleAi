@@ -1,0 +1,268 @@
+"""
+data/fashion_trends/sample_trends.py
+Sample Fashion Trend Documents
+
+20 curated trend documents for initial Qdrant ingestion.
+Each document is a dict with: text, category, season, style_tag.
+Run this script to print the documents as JSON, or import TREND_DOCUMENTS.
+"""
+
+import json
+from typing import List, Dict
+
+TREND_DOCUMENTS: List[Dict[str, str]] = [
+    {
+        "text": (
+            "Quiet Luxury is the defining menswear aesthetic of 2024–2025. "
+            "The look centers on understated, impeccably fitted pieces: cashmere crewnecks, "
+            "tailored trousers in camel or grey flannel, and clean leather loafers. "
+            "Brands like The Row, Loro Piana, and Brunello Cucinelli lead the category. "
+            "Avoid logos. Let quality of fabric and cut do the talking. "
+            "Works best on oval and oblong face shapes with a defined jawline."
+        ),
+        "category": "menswear",
+        "season":   "autumn-winter",
+        "style_tag": "quiet-luxury",
+    },
+    {
+        "text": (
+            "Coastal Grandfather — the relaxed, sun-bleached take on preppy dressing. "
+            "Key pieces: wide-brimmed linen hats, oversized linen blazers in ecru or sky blue, "
+            "canvas sneakers, and relaxed chino shorts. "
+            "This trend flatters medium and olive skin tones most, and pairs well with wavy or "
+            "straight hair. Heart and oval face shapes carry the relaxed silhouette best."
+        ),
+        "category": "unisex",
+        "season":   "spring-summer",
+        "style_tag": "coastal-grandfather",
+    },
+    {
+        "text": (
+            "Dark Academia revival continues into 2025 — think tweed blazers, turtleneck knits, "
+            "Oxford-cap-toe shoes, and heavy wool coats. "
+            "The palette is deep: chocolate brown, hunter green, burgundy, and charcoal. "
+            "Deep and tan skin tones make these colors absolutely pop. "
+            "Square and diamond face shapes particularly suit the structured collars and lapels."
+        ),
+        "category": "menswear",
+        "season":   "autumn-winter",
+        "style_tag": "dark-academia",
+    },
+    {
+        "text": (
+            "Gorpcore has moved from trail to street. Technical fabrics, utility vests with "
+            "multiple pockets, trail runners (Salomon XT-6, Hoka Clifton), and weather-proof "
+            "anorak jackets define the trend. "
+            "Brands: Arc'teryx, Patagonia, and The North Face Purple Label. "
+            "Particularly strong for round and oblong face shapes who benefit from the "
+            "structured volume of technical outerwear."
+        ),
+        "category": "streetwear",
+        "season":   "all-seasons",
+        "style_tag": "gorpcore",
+    },
+    {
+        "text": (
+            "Dopamine Dressing — bold, joy-forward color blocking using saturated hues. "
+            "Electric blue paired with tangerine, lime green with cobalt, or head-to-toe "
+            "cherry red. Statement accessories: chunky resin jewelry, color-coordinated bags. "
+            "Works brilliantly on fair and deep skin tones where contrast is maximized. "
+            "Oval face shapes have the freedom to experiment most with bold accessories."
+        ),
+        "category": "unisex",
+        "season":   "spring-summer",
+        "style_tag": "dopamine-dressing",
+    },
+    {
+        "text": (
+            "Y2K Streetwear nostalgia is in full swing: low-rise jeans (Diesel), graphic "
+            "baby tees, track suits in velour or nylon, and chunky dad sneakers (New Balance 990, "
+            "ASICS Gel-Kayano 14). "
+            "Platform shoes add height and work well for round face shapes to create elongation. "
+            "Olive and medium skin tones look especially good in the warm browns and pop colors "
+            "characteristic of early-2000s palettes."
+        ),
+        "category": "streetwear",
+        "season":   "spring-summer",
+        "style_tag": "y2k",
+    },
+    {
+        "text": (
+            "Workwear Chic: power dressing has returned with an elevated, modern spin. "
+            "Oversized double-breasted blazers in pinstripe, wide-leg wool trousers, "
+            "pointed-toe mules, and silk blouses. "
+            "The silhouette creates a strong shoulder line that balances a heart or round face. "
+            "Light and fair skin tones shine in the classic navy × ivory workwear palette."
+        ),
+        "category": "womenswear",
+        "season":   "autumn-winter",
+        "style_tag": "workwear-chic",
+    },
+    {
+        "text": (
+            "Vintage Denim Revival: raw-selvedge and distressed denim in every cut — "
+            "straight leg, flare, and carpenter. "
+            "Paired with vintage band tees, trucker jackets, and retro white sneakers (Converse, "
+            "New Balance 574). "
+            "This look works across all face shapes and is particularly flattering on wavy and "
+            "curly hair textures worn naturally. Olive and tan skin tones glow in indigo denim."
+        ),
+        "category": "unisex",
+        "season":   "all-seasons",
+        "style_tag": "vintage-denim",
+    },
+    {
+        "text": (
+            "The Linen Suit Moment: unstructured linen suits in natural, sage, or chalk are the "
+            "defining warm-weather formalwear of 2025. "
+            "Wear single-breasted, one-button with a plain white tee or a relaxed collarless shirt. "
+            "Especially elegant on medium-to-olive skin tones. "
+            "The relaxed structure softens a square jaw and adds sophistication to an oblong face."
+        ),
+        "category": "menswear",
+        "season":   "spring-summer",
+        "style_tag": "linen-suit",
+    },
+    {
+        "text": (
+            "Monochrome Dressing: head-to-toe single-color outfits create a long, lean line. "
+            "Popular tones: all-black (evergreen), all-camel, all-white, all-terracotta. "
+            "The elongating effect benefits round and oblong face shapes by drawing the eye "
+            "vertically. Deep and fair skin tones create the most striking visual impact in "
+            "high-contrast monochromes like all-white or all-black."
+        ),
+        "category": "unisex",
+        "season":   "all-seasons",
+        "style_tag": "monochrome",
+    },
+    {
+        "text": (
+            "Barrel-Leg and Wide-Leg Denim is the trouser silhouette of the moment. "
+            "High-waisted with a generous thigh and a taper at the ankle, creating an hourglass "
+            "or triangular silhouette from the waist down. "
+            "Works as a counterbalance for heart and diamond face shapes — wider jaw line "
+            "needs width at the hips to create balance. "
+            "Best in raw indigo or washed-stone tones."
+        ),
+        "category": "womenswear",
+        "season":   "all-seasons",
+        "style_tag": "barrel-leg-denim",
+    },
+    {
+        "text": (
+            "Statement Outerwear as the hero piece: the single investment item that defines "
+            "an entire look. Think sculptural wool coats (A.P.C., Max Mara), oversized puffers "
+            "in camel or cobalt, or sherpa-lined trucker jackets. "
+            "For square and heart face shapes, structured coats with strong lapels add dramatic "
+            "framing. Fair and light skin tones pop inside camel and ivory outerwear."
+        ),
+        "category": "unisex",
+        "season":   "autumn-winter",
+        "style_tag": "statement-outerwear",
+    },
+    {
+        "text": (
+            "Elevated Basics: the capsule wardrobe philosophy is trending. "
+            "High-quality versions of simple pieces: heavyweight plain tees (230 g/m²), "
+            "classic Breton stripe tops, perfectly fitted chinos, and clean white leather sneakers. "
+            "Brands excelling here: Uniqlo U, Arket, and COS. "
+            "This understated look works on every face shape — the focus is on fit and fabric."
+        ),
+        "category": "unisex",
+        "season":   "all-seasons",
+        "style_tag": "elevated-basics",
+    },
+    {
+        "text": (
+            "Sheer and Lightweight Layering: mesh tops, organza blouses, and sheer knit cardigans "
+            "worn over minimal underlayers. "
+            "The lightness of these pieces creates dimension without bulk. "
+            "Perfect for oval and heart face shapes where softness in the upper body complements "
+            "the face. Tan and olive skin tones look stunning in warm-nude sheers."
+        ),
+        "category": "womenswear",
+        "season":   "spring-summer",
+        "style_tag": "sheer-layering",
+    },
+    {
+        "text": (
+            "Relaxed Tailoring for men: the oversized blazer worn with wide-leg trousers and "
+            "chunky loafers. The proportions are deliberately large — a true departure from "
+            "the slim-fit era. "
+            "This trend suits oblong faces particularly well, as the wide shoulders create "
+            "horizontal interest. Light skin tones suit the trend's neutral palette of sand, "
+            "stone, and slate."
+        ),
+        "category": "menswear",
+        "season":   "all-seasons",
+        "style_tag": "relaxed-tailoring",
+    },
+    {
+        "text": (
+            "Maximalist Jewelry: bold, sculptural pieces as the focal point of an otherwise "
+            "minimal outfit. Chunky gold chain necklaces, oversized hoop earrings, stacked "
+            "bangles in brass or resin. "
+            "These pieces draw attention to the jawline and neck, working especially well for "
+            "those with defined or sharp jaw types. Deep and tan skin tones glow in gold tones."
+        ),
+        "category": "accessories",
+        "season":   "all-seasons",
+        "style_tag": "maximalist-jewelry",
+    },
+    {
+        "text": (
+            "Ballet-Core Dressing: satin slip skirts, ballet flats, wrap cardigans, and "
+            "soft pink / blush / powder blue palettes. "
+            "Delicate and feminine, this look works beautifully with straight and wavy hair. "
+            "Fair and light skin tones shine in the pastel palette. "
+            "Upturned and almond eye shapes are particularly complemented by the softness "
+            "of this aesthetic."
+        ),
+        "category": "womenswear",
+        "season":   "spring-summer",
+        "style_tag": "balletcore",
+    },
+    {
+        "text": (
+            "The Leather Jacket Renaissance: from biker to moto to oversized and cropped, "
+            "leather outerwear is evergreen in 2025. "
+            "Black leather biker jackets: timeless for square and diamond face shapes. "
+            "Tan/caramel leather works for olive and medium skin tones. "
+            "Cropped leather bombers flatter those with longer faces (oblong) by creating "
+            "a horizontal break at the waist."
+        ),
+        "category": "unisex",
+        "season":   "autumn-winter",
+        "style_tag": "leather-jacket",
+    },
+    {
+        "text": (
+            "Tonal Earthtones: building outfits within the warm neutral spectrum — "
+            "terracotta, burnt sienna, caramel, dusty rose, and warm white. "
+            "This palette is the 2025 alternative to all-beige and feels more dimensional. "
+            "It is particularly flattering on olive, tan, and deep skin tones. "
+            "Works well with coily and curly hair textures, celebrating natural volume."
+        ),
+        "category": "unisex",
+        "season":   "autumn-winter",
+        "style_tag": "earthtones",
+    },
+    {
+        "text": (
+            "Capsule Sneaker Rotation: instead of one statement sneaker, the trend is "
+            "three complementary pairs covering every occasion. "
+            "White low-top (Nike Air Force 1), clean runner (New Balance 990v6), and "
+            "a fashion sneaker (Adidas Gazelle or Samba). "
+            "Sneaker styling works across all face shapes, allowing the upper body and "
+            "facial features to take center stage — a great entry point for any style journey."
+        ),
+        "category": "footwear",
+        "season":   "all-seasons",
+        "style_tag": "capsule-sneakers",
+    },
+]
+
+
+if __name__ == "__main__":
+    print(json.dumps(TREND_DOCUMENTS, indent=2, ensure_ascii=False))
+    print(f"\nTotal documents: {len(TREND_DOCUMENTS)}")
