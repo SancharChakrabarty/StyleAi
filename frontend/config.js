@@ -9,4 +9,4 @@
 // set it once here and never change it again.
 // ─────────────────────────────────────────────────────────────
 
-window.STYLEAI_API_URL = 'https://YOUR-NGROK-URL.ngrok-free.app';
+window.STYLEAI_API_URL = 'https://robust-constable-deserving.ngrok-free.dev';
