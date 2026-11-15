@@ -425,50 +425,77 @@
   }
 
   /* ── PDF download — clean light export ── */
-  downloadBtn.addEventListener('click', () => {
-    const el = document.getElementById('result-wrap');
+downloadBtn.addEventListener('click', async () => {
+  const src = document.getElementById('result-wrap');
 
-    // Clone the element so we don't disturb the live UI
-    const clone = el.cloneNode(true);
-    clone.style.cssText = 'background:#ffffff;color:#111111;padding:20px;font-family:Georgia,serif;font-size:14px;line-height:1.7;';
+  // Clone and strip the id so the "#result-wrap { display:none }" rule can't apply
+  const clone = src.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
 
-    // Force all child elements to light colors
-    clone.querySelectorAll('*').forEach(e => {
-      e.style.color = '#111111';
-      e.style.background = 'transparent';
-      e.style.borderColor = '#cccccc';
-    });
+  // Remove UI-only elements from the export
+  clone.querySelector('.result-header button')?.remove();
 
-    // Style headings gold-ish for readability
-    clone.querySelectorAll('h2').forEach(e => { e.style.color = '#8a6a2a'; e.style.borderBottomColor = '#cccccc'; });
-    clone.querySelectorAll('h3').forEach(e => { e.style.color = '#333333'; });
-    clone.querySelectorAll('strong').forEach(e => { e.style.color = '#8a6a2a'; });
-    clone.querySelectorAll('.attr-pill').forEach(e => {
-      e.style.background = '#f5f5f5';
-      e.style.border = '1px solid #cccccc';
-      e.style.color = '#333333';
-    });
-    clone.querySelectorAll('.attr-pill strong').forEach(e => { e.style.color = '#111111'; });
-    clone.querySelectorAll('.timing-chip').forEach(e => { e.style.color = '#888888'; });
+  // Light styling (use setProperty so display isn't lost)
+  clone.style.cssText = `
+    display:block;
+    width:800px;
+    margin:0;
+    padding:20px;
+    background:#ffffff;
+    color:#111111;
+    font-family:Georgia,serif;
+    font-size:14px;
+    line-height:1.7;
+  `;
 
-    // Temporarily attach to body (hidden) so html2pdf can render it
-    clone.style.position = 'absolute';
-    clone.style.left = '-9999px';
-    clone.style.width = '800px';
-    document.body.appendChild(clone);
-
-    const opt = {
-      margin:       [10, 14, 10, 14],
-      filename:     'AI-Style-Advisor-Report.pdf',
-      image:        { type: 'jpeg', quality: 0.97 },
-      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    };
-
-    html2pdf().set(opt).from(clone).save().then(() => {
-      document.body.removeChild(clone);
-    });
+  clone.querySelectorAll('*').forEach(e => {
+    e.style.color = '#111111';
+    e.style.background = 'transparent';
+    e.style.borderColor = '#cccccc';
   });
+  clone.querySelectorAll('h2').forEach(e => { e.style.color = '#8a6a2a'; });
+  clone.querySelectorAll('h3').forEach(e => { e.style.color = '#333333'; });
+  clone.querySelectorAll('strong').forEach(e => { e.style.color = '#8a6a2a'; });
+  clone.querySelectorAll('.attr-pill').forEach(e => {
+    e.style.background = '#f5f5f5';
+    e.style.border = '1px solid #cccccc';
+    e.style.color = '#333333';
+  });
+  clone.querySelectorAll('.attr-pill strong').forEach(e => { e.style.color = '#111111'; });
+  clone.querySelectorAll('.timing-chip').forEach(e => { e.style.color = '#888888'; });
+
+  // Put it inside the viewport, hidden behind the page (NOT at -9999px)
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText =
+    'position:fixed;top:0;left:0;width:800px;z-index:-1;background:#fff;';
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
+
+  const opt = {
+    margin:      [10, 14, 10, 14],
+    filename:    'AI-Style-Advisor-Report.pdf',
+    image:       { type: 'jpeg', quality: 0.97 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: 800,
+    },
+    jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak:   { mode: ['css', 'legacy'] },
+  };
+
+  try {
+    await html2pdf().set(opt).from(clone).save();
+  } catch (err) {
+    showError('PDF export failed: ' + err.message);
+  } finally {
+    document.body.removeChild(wrapper);
+  }
+});
 
   function showError(msg) {
     errorBanner.textContent = msg;
