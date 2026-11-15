@@ -518,6 +518,7 @@
       const res = await fetch(`${API_BASE}/analyze`, {
         method: 'POST',
         body:   formData,
+        headers: { 'ngrok-skip-browser-warning': '1' },
       });
 
       if (!res.ok) {
