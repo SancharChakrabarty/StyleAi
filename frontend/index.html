@@ -17,8 +17,8 @@
       --bg:        #0f0f13;
       --surface:   #18181f;
       --border:    #2a2a38;
-      --accent:    #c9a96e;        /* warm gold */
-      --accent2:   #6e8fc9;        /* muted blue */
+      --accent:    #c9a96e;
+      --accent2:   #6e8fc9;
       --text:      #e8e4dc;
       --muted:     #7a7a8c;
       --success:   #4caf82;
@@ -37,7 +37,6 @@
       line-height: 1.6;
     }
 
-    /* ── Layout ── */
     .shell {
       min-height: 100vh;
       display: grid;
@@ -60,13 +59,8 @@
       font-size: 20px; flex-shrink: 0;
     }
 
-    header h1 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      letter-spacing: .03em;
-      color: var(--text);
-    }
-    header p { font-size: .8rem; color: var(--muted); }
+    header h1 { font-size: 1.2rem; font-weight: 600; letter-spacing: .03em; color: var(--text); }
+    header p  { font-size: .8rem; color: var(--muted); }
 
     main { padding: 32px 24px; max-width: 860px; margin: 0 auto; width: 100%; }
 
@@ -78,7 +72,6 @@
       text-align: center;
     }
 
-    /* ── Upload zone ── */
     #drop-zone {
       border: 2px dashed var(--border);
       border-radius: var(--radius);
@@ -88,195 +81,99 @@
       transition: border-color .2s, background .2s;
       position: relative;
     }
-    #drop-zone.drag-over {
-      border-color: var(--accent);
-      background: rgba(201,169,110,.06);
-    }
-    #drop-zone .icon { font-size: 40px; margin-bottom: 12px; }
+    #drop-zone.drag-over { border-color: var(--accent); background: rgba(201,169,110,.06); }
+    #drop-zone .icon  { font-size: 40px; margin-bottom: 12px; }
     #drop-zone .label { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     #drop-zone .sub   { font-size: .8rem; color: var(--muted); }
     #file-input { display: none; }
 
-    /* ── Preview ── */
-    #preview-wrap {
-      display: none;
-      margin-top: 24px;
-      position: relative;
-    }
+    #preview-wrap { display: none; margin-top: 24px; position: relative; }
     #preview-wrap img {
-      width: 100%;
-      max-height: 340px;
-      object-fit: contain;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: var(--surface);
+      width: 100%; max-height: 340px; object-fit: contain;
+      border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface);
     }
     #remove-btn {
       position: absolute; top: 10px; right: 10px;
-      background: rgba(0,0,0,.6); border: none;
-      color: var(--text); border-radius: 50%;
-      width: 30px; height: 30px; cursor: pointer;
+      background: rgba(0,0,0,.6); border: none; color: var(--text);
+      border-radius: 50%; width: 30px; height: 30px; cursor: pointer;
       font-size: 16px; display: flex; align-items: center; justify-content: center;
     }
     #remove-btn:hover { background: rgba(224,108,108,.8); }
 
-    /* ── CTA button ── */
     #analyze-btn {
-      display: block;
-      width: 100%;
-      margin-top: 20px;
-      padding: 15px;
-      background: var(--accent);
-      color: #111;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: .04em;
-      cursor: pointer;
-      transition: opacity .2s, transform .1s;
+      display: block; width: 100%; margin-top: 20px; padding: 15px;
+      background: var(--accent); color: #111; border: none;
+      border-radius: var(--radius); font-size: 1rem; font-weight: 700;
+      letter-spacing: .04em; cursor: pointer; transition: opacity .2s, transform .1s;
     }
     #analyze-btn:hover:not(:disabled) { opacity: .88; }
     #analyze-btn:active:not(:disabled) { transform: scale(.985); }
     #analyze-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-    /* ── Progress steps ── */
-    #progress-wrap {
-      display: none;
-      margin-top: 28px;
-    }
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    #progress-wrap { display: none; margin-top: 28px; }
+    .steps { display: flex; flex-direction: column; gap: 10px; }
     .step {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      font-size: .9rem;
-      color: var(--muted);
-      transition: border-color .3s, color .3s;
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-radius: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: .9rem; color: var(--muted); transition: border-color .3s, color .3s;
     }
     .step .step-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
-    .step.active  { border-color: var(--accent); color: var(--accent); }
-    .step.done    { border-color: var(--success); color: var(--success); }
+    .step.active { border-color: var(--accent); color: var(--accent); }
+    .step.done   { border-color: var(--success); color: var(--success); }
     .step.done .step-icon::after { content: '✓'; }
     .step.active .spinner {
-      display: inline-block;
-      width: 16px; height: 16px;
-      border: 2px solid var(--accent);
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      margin-left: auto;
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid var(--accent); border-top-color: transparent;
+      border-radius: 50%; animation: spin .7s linear infinite; margin-left: auto;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Result card ── */
     #result-wrap { display: none; margin-top: 32px; }
 
     .result-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
     }
     .result-header h2 { font-size: 1.1rem; color: var(--accent); }
 
     #download-btn {
-      padding: 8px 18px;
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      border-radius: 8px;
-      font-size: .85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background .2s;
+      padding: 8px 18px; background: transparent; color: var(--accent);
+      border: 1px solid var(--accent); border-radius: 8px;
+      font-size: .85rem; font-weight: 600; cursor: pointer; transition: background .2s;
     }
     #download-btn:hover { background: rgba(201,169,110,.12); }
 
-    /* Attribute pills */
-    .attr-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
+    .attr-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
     .attr-pill {
-      padding: 4px 12px;
-      border-radius: 20px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      font-size: .78rem;
-      color: var(--muted);
+      padding: 4px 12px; border-radius: 20px;
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: .78rem; color: var(--muted);
     }
     .attr-pill strong { color: var(--text); }
 
-    /* Report prose */
-    #report-content {
-      font-family: var(--font-body);
-      font-size: .97rem;
-      line-height: 1.85;
-      color: var(--text);
-    }
+    #report-content { font-family: var(--font-body); font-size: .97rem; line-height: 1.85; color: var(--text); }
     #report-content h2 {
-      font-family: var(--font-ui);
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--accent);
-      margin: 28px 0 10px;
-      padding-bottom: 6px;
+      font-family: var(--font-ui); font-size: 1.05rem; font-weight: 700;
+      color: var(--accent); margin: 28px 0 10px; padding-bottom: 6px;
       border-bottom: 1px solid var(--border);
     }
-    #report-content h3 {
-      font-family: var(--font-ui);
-      font-size: .95rem;
-      font-weight: 600;
-      margin: 18px 0 6px;
-    }
+    #report-content h3 { font-family: var(--font-ui); font-size: .95rem; font-weight: 600; margin: 18px 0 6px; }
     #report-content p  { margin-bottom: 12px; }
-    #report-content ul,
-    #report-content ol { padding-left: 22px; margin-bottom: 12px; }
+    #report-content ul, #report-content ol { padding-left: 22px; margin-bottom: 12px; }
     #report-content li { margin-bottom: 5px; }
     #report-content strong { color: var(--accent); font-weight: 600; }
     #report-content em { font-style: italic; color: var(--muted); }
-    #report-content code {
-      background: var(--surface);
-      padding: 1px 6px;
-      border-radius: 4px;
-      font-size: .9em;
-    }
+    #report-content code { background: var(--surface); padding: 1px 6px; border-radius: 4px; font-size: .9em; }
 
-    /* ── Error banner ── */
     #error-banner {
-      display: none;
-      margin-top: 20px;
-      padding: 14px 18px;
-      background: rgba(224,108,108,.1);
-      border: 1px solid var(--error);
-      border-radius: 8px;
-      color: var(--error);
-      font-size: .9rem;
+      display: none; margin-top: 20px; padding: 14px 18px;
+      background: rgba(224,108,108,.1); border: 1px solid var(--error);
+      border-radius: 8px; color: var(--error); font-size: .9rem;
     }
 
-    /* ── Timing chip ── */
-    .timing-chip {
-      font-size: .75rem;
-      color: var(--muted);
-      margin-top: 20px;
-      text-align: right;
-    }
+    .timing-chip { font-size: .75rem; color: var(--muted); margin-top: 20px; text-align: right; }
 
-    /* ── Mobile ── */
     @media (max-width: 560px) {
       main { padding: 20px 16px; }
       #drop-zone { padding: 36px 16px; }
@@ -297,7 +194,6 @@
 
   <main>
 
-    <!-- Drop zone -->
     <div id="drop-zone" role="button" tabindex="0" aria-label="Upload photo">
       <div class="icon">📷</div>
       <p class="label">Drop your photo here</p>
@@ -305,50 +201,39 @@
       <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" />
     </div>
 
-    <!-- Preview -->
     <div id="preview-wrap">
       <img id="preview-img" alt="Preview" />
       <button id="remove-btn" title="Remove image" aria-label="Remove image">✕</button>
     </div>
 
-    <!-- Analyze button -->
     <button id="analyze-btn" disabled>Analyze My Style</button>
 
-    <!-- Error -->
     <div id="error-banner" role="alert"></div>
 
-    <!-- Progress -->
     <div id="progress-wrap" aria-live="polite">
       <div class="steps">
-        <div class="step" id="step-1" data-label="Analyzing facial features …">
+        <div class="step" id="step-1">
           <span class="step-icon">👤</span>
           <span>Analyzing facial features</span>
         </div>
-        <div class="step" id="step-2" data-label="Fetching current fashion trends …">
+        <div class="step" id="step-2">
           <span class="step-icon">🔍</span>
           <span>Fetching current fashion trends</span>
         </div>
-        <div class="step" id="step-3" data-label="Generating your personalized report …">
+        <div class="step" id="step-3">
           <span class="step-icon">✍️</span>
           <span>Generating your personalized report</span>
         </div>
       </div>
     </div>
 
-    <!-- Result -->
     <div id="result-wrap">
       <div class="result-header">
         <h2>Your Style Report</h2>
         <button id="download-btn">⬇ Download PDF</button>
       </div>
-
-      <!-- Attribute pills -->
       <div class="attr-grid" id="attr-grid"></div>
-
-      <!-- Markdown report -->
       <div id="report-content"></div>
-
-      <!-- Timing -->
       <div class="timing-chip" id="timing-chip"></div>
     </div>
 
@@ -358,12 +243,9 @@
 </div>
 
 <script>
-  /* ── State ── */
   let selectedFile = null;
-  // Set STYLEAI_API_URL as a global before this script to override (e.g. from a config.js)
   const API_BASE = window.STYLEAI_API_URL || 'https://robust-constable-deserving.ngrok-free.dev';
 
-  /* ── Element refs ── */
   const dropZone    = document.getElementById('drop-zone');
   const fileInput   = document.getElementById('file-input');
   const previewWrap = document.getElementById('preview-wrap');
@@ -378,11 +260,9 @@
   const timingChip  = document.getElementById('timing-chip');
   const downloadBtn = document.getElementById('download-btn');
 
-  /* ── Drop zone: click ── */
   dropZone.addEventListener('click', () => fileInput.click());
   dropZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
 
-  /* ── Drop zone: drag-and-drop ── */
   ['dragenter', 'dragover'].forEach(evt => {
     dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
   });
@@ -398,10 +278,8 @@
     if (fileInput.files.length) setFile(fileInput.files[0]);
   });
 
-  /* ── Remove ── */
   removeBtn.addEventListener('click', clearFile);
 
-  /* ── Set file ── */
   function setFile(file) {
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       showError('Unsupported file type. Please upload a JPEG, PNG, or WEBP image.');
@@ -431,7 +309,6 @@
     hideError();
   }
 
-  /* ── Progress steps ── */
   const steps = [
     document.getElementById('step-1'),
     document.getElementById('step-2'),
@@ -470,14 +347,12 @@
     });
   }
 
-  /* ── Simulate progress during API call ── */
   let progressTimer = null;
   function startProgress() {
     progressWrap.style.display = 'block';
     resultWrap.style.display = 'none';
     resetSteps();
     activateStep(0);
-
     let idx = 0;
     progressTimer = setInterval(() => {
       idx++;
@@ -492,7 +367,6 @@
     setTimeout(() => { progressWrap.style.display = 'none'; }, 600);
   }
 
-  /* ── Render attributes ── */
   function renderAttrs(attrs) {
     attrGrid.innerHTML = '';
     Object.entries(attrs).forEach(([k, v]) => {
@@ -503,10 +377,8 @@
     });
   }
 
-  /* ── Analyze ── */
   analyzeBtn.addEventListener('click', async () => {
     if (!selectedFile) return;
-
     analyzeBtn.disabled = true;
     hideError();
     startProgress();
@@ -527,7 +399,6 @@
       }
 
       const data = await res.json();
-
       stopProgress();
       renderReport(data);
 
@@ -539,38 +410,55 @@
     }
   });
 
-  /* ── Render report ── */
   function renderReport(data) {
     renderAttrs(data.attributes || {});
-
     const md = data.report || '_No report generated._';
     reportEl.innerHTML = marked.parse(md);
-
     const t = data.timing || {};
     timingChip.textContent =
       `⏱ Total: ${Math.round(data.processing_time_ms)}ms  ` +
       `(extraction ${Math.round(t.extraction_ms)}ms · ` +
       `retrieval ${Math.round(t.retrieval_ms)}ms · ` +
       `generation ${Math.round(t.generation_ms)}ms)`;
-
     resultWrap.style.display = 'block';
     resultWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  /* ── PDF download ── */
+  /* ── PDF download — light background for clean export ── */
   downloadBtn.addEventListener('click', () => {
     const el = document.getElementById('result-wrap');
     const opt = {
       margin:       [10, 14, 10, 14],
       filename:     'AI-Style-Advisor-Report.pdf',
       image:        { type: 'jpeg', quality: 0.96 },
-      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#18181f' },
+      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
     };
-    html2pdf().set(opt).from(el).save();
+
+    // Temporarily switch to light colors for PDF capture
+    const darkEls = el.querySelectorAll('*');
+    const prevStyles = [];
+    darkEls.forEach(e => {
+      prevStyles.push({ el: e, color: e.style.color, bg: e.style.background, border: e.style.borderColor });
+      e.style.color = '#111111';
+      e.style.background = '#ffffff';
+      e.style.borderColor = '#dddddd';
+    });
+    el.style.background = '#ffffff';
+    el.style.color = '#111111';
+
+    html2pdf().set(opt).from(el).save().then(() => {
+      // Restore dark theme
+      darkEls.forEach((e, i) => {
+        e.style.color = prevStyles[i].color;
+        e.style.background = prevStyles[i].bg;
+        e.style.borderColor = prevStyles[i].border;
+      });
+      el.style.background = '';
+      el.style.color = '';
+    });
   });
 
-  /* ── Error helpers ── */
   function showError(msg) {
     errorBanner.textContent = msg;
     errorBanner.style.display = 'block';
