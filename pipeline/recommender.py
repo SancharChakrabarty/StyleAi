@@ -11,7 +11,7 @@ from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL_PATH = "models/llm/merged"
+DEFAULT_MODEL_PATH = "models/llm/adapter"
 _cached_recommender = None
 
 LLM_DIR = str(Path(__file__).parent.parent / "models" / "llm")

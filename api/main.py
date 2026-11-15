@@ -45,7 +45,7 @@ UPLOAD_TEMP_DIR  = Path("/tmp/style-advisor-uploads")
 UPLOAD_TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 VISION_CHECKPOINT = os.getenv("VISION_CHECKPOINT", "models/vision/checkpoints/epoch_1.pt")
-LLM_MODEL_PATH    = os.getenv("LLM_MODEL_PATH",    "models/llm/merged")
+LLM_MODEL_PATH    = os.getenv("LLM_MODEL_PATH",    "models/llm/adapter")
 LLM_BACKEND       = os.getenv("LLM_BACKEND",       "local")  # "local" | "ollama"
 TOP_K_TRENDS      = int(os.getenv("TOP_K_TRENDS",  "5"))
 
